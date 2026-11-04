@@ -643,6 +643,9 @@ function toast(msg){const t=$("#toast");t.textContent=msg;t.hidden=false;clearTi
 function itemsOf(p){const out=[];const it=p.items||{};for(const k of Object.keys(it)){const x=it[k];if(!x||x.status==="geloescht")continue;out.push({...x,pos:+k,nr:p.nr,name:p.name,code:p.nr+"-"+k})}return out.sort((a,b)=>a.pos-b.pos)}
 function allItems(){const o=[];for(const p of S.personen.values())o.push(...itemsOf(p));return o.sort((a,b)=>a.nr-b.nr||a.pos-b.pos)}
 function findItem(nr,pos){const p=S.personen.get(String(nr));if(!p)return null;const x=(p.items||{})[pos];if(!x||x.status==="geloescht")return null;return {...x,pos:+pos,nr:p.nr,name:p.name,code:p.nr+"-"+pos}}
+function matchQ(x,q){q=String(q).trim().toLowerCase();if(!q)return true;const c=parseCode(q);if(c)return x.code===c.nr+"-"+c.pos;
+  const bez=(x.bez||"").toLowerCase(),gr=(x.gr||"").toLowerCase(),nm=(x.name||"").toLowerCase();
+  return q.split(/\s+/).every(t=>/^\d+$/.test(t)?(String(x.nr)===t||x.code.startsWith(t+"-")||gr.split(/[^0-9]+/).includes(t)):/^\d+-\d*$/.test(t)?x.code.startsWith(t):(bez.includes(t)||nm.includes(t)||gr.includes(t)))}
 function parseCode(s){const m=String(s).trim().match(/^(\d+)\s*[-\/., ]\s*(\d+)$/);return m?{nr:String(+m[1]),pos:String(+m[2])}:null}
 function stats(p){const it=itemsOf(p);const s={n:it.length,offen:0,verkauft:0,zurueck:0,umsatz:0,spende:0,ausz:0,bezahlt:0};
   for(const x of it){s[x.status]=(s[x.status]||0)+1;if(x.status==="verkauft"){const v=+x.vk||0;s.umsatz+=v;if(x.art==="spende")s.spende+=v;else{s.ausz+=v;if(x.ausgezahlt)s.bezahlt+=v}}}
@@ -678,7 +681,7 @@ function refresh(){ // nach neuen Daten, ohne Formulare zu zerstören
 function vKasse(v){v.innerHTML=`
 <div class="grid2">
   <section class="panel">
-    <div><h2>Verkauf</h2><p class="hint">Nummer vom Preisschild eingeben, z. B. 110-3, oder nach Bezeichnung suchen.</p></div>
+    <div><h2>Verkauf</h2><p class="hint">Nummer vom Preisschild eingeben, z. B. 110-3. Ohne Nummer suchen geht auch, am besten mit der Personennummer davor, z. B. „102 Unterhemd“.</p></div>
     <form id="k-form" class="stack" autocomplete="off">
       <input id="k-code" class="big" placeholder="110-3" aria-label="Teilenummer oder Suchbegriff" autocapitalize="off" enterkeyhint="go">
     </form>
@@ -720,7 +723,7 @@ function kResults(){const box=$("#k-res");if(!box)return;const q=($("#k-code").v
   if(!S.loadedP){box.innerHTML=`<div class="empty">Lade Bestand …</div>`;return}
   let list=allItems().filter(x=>x.status==="offen"&&!inCart.has(x.code));
   if(!list.length){box.innerHTML=`<div class="empty">Noch keine Teile im Laden. Neue Teile trägst du unter <b>Annahme</b> ein.</div>`;return}
-  if(q){const c=parseCode(q);list=list.filter(x=>c?x.code===c.nr+"-"+c.pos:(x.code.startsWith(q.replace(/\s/g,""))||(x.bez||"").toLowerCase().includes(q)||(x.gr||"").toLowerCase()===q||(x.name||"").toLowerCase().includes(q)))}
+  if(q){list=list.filter(x=>matchQ(x,q))}
   else list=list.slice(-8).reverse();
   box.innerHTML=(q?"":`<p class="hint">Zuletzt angenommen:</p>`)+(list.slice(0,30).map(x=>`<button class="ri" data-nr="${x.nr}" data-pos="${x.pos}">${tag(x.code)}<span class="t"><b>${h(x.bez)}</b> <span class="muted">${h(x.gr||"")}</span></span><b>${eur(x.preis)}</b></button>`).join("")||`<div class="empty">Nichts gefunden.</div>`)}
 function addToCart(nr,pos){const x=findItem(nr,pos);
@@ -931,7 +934,7 @@ function bList(){const box=$("#b-list");if(!box)return;if(!S.loadedP){box.innerH
   const q=S.bSearch.trim().toLowerCase();const c=parseCode(q);
   let l=allItems();const tot=l.length;
   if(S.bFilter!=="alle")l=l.filter(x=>x.status===S.bFilter);
-  if(q)l=l.filter(x=>c?x.code===c.nr+"-"+c.pos:(x.code.startsWith(q)||String(x.nr)===q||(x.bez||"").toLowerCase().includes(q)||(x.gr||"").toLowerCase()===q||(x.name||"").toLowerCase().includes(q)));
+  if(q)l=l.filter(x=>matchQ(x,q));
   if(!tot){box.innerHTML=`<div class="tablewrap"><div class="empty">Das Bestandsbuch ist noch leer. Unter <b>Annahme</b> trägst du das erste Teil ein.</div></div>`;return}
   const sum=l.reduce((a,x)=>a+(x.status==="verkauft"?+x.vk||0:0),0);
   box.innerHTML=`<p class="hint" style="margin-bottom:8px">${l.length} von ${tot} Teilen${sum?" · verkauft für "+eur(sum):""}. Zum Bearbeiten auf eine Zeile tippen.</p>
