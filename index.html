@@ -962,12 +962,9 @@ function itemSheet(nr,pos){const x=findItem(nr,pos);if(!x)return;
     <div class="btns"><button class="b pri">Speichern</button>
       ${x.status==="offen"?`<button type="button" class="b" id="s-back">An Person zurückgegeben</button>`:""}
       ${x.status==="zurueck"?`<button type="button" class="b" id="s-shop">Wieder in den Laden</button>`:""}
-      ${x.status!=="verkauft"?`<button type="button" class="b danger" id="s-del">Löschen</button>`:isVor(x)?`<button type="button" class="b" id="s-unvor">Doch nicht verkauft</button>`:`<p class="hint">Einen Verkauf machst du rückgängig, indem du unter Quittungen die Quittung stornierst.</p>`}
+      ${x.status!=="verkauft"?`<button type="button" class="b danger" id="s-del">Löschen</button>`:isVor(x)?`<p class="hint">Dieses Teil wurde schon vor dem Kassensystem verkauft.</p>`:`<p class="hint">Einen Verkauf machst du rückgängig, indem du unter Quittungen die Quittung stornierst.</p>`}
     </div>
-  </form>
-  ${x.status==="offen"?`<div class="stack" style="border-top:1px solid var(--line);padding-top:14px">
-    <button type="button" class="link" id="s-vortog">Wurde schon vor dem Kassensystem verkauft</button>
-    <div id="s-vorbox" class="dealbox" hidden><label class="f" for="s-vorvk">Verkauft für<input id="s-vorvk" inputmode="decimal" value="${(+x.preis).toFixed(2).replace(".",",")}"></label><button type="button" class="b danger" id="s-vorgo">Als verkauft markieren</button></div></div>`:""}`);
+  </form>`);
   const pr=$("#s-prof");if(pr)pr.onclick=()=>{closeSheet();S.pDetail=String(x.nr);if(S.view==="personen")pRender();else go("personen");window.scrollTo(0,0)};
   const ref=()=>db.doc("personen/"+x.nr);
   $("#s-form").addEventListener("submit",async e=>{e.preventDefault();const preis=parseEur($("#s-preis").value);if(isNaN(preis)){toast("Preis bitte als Zahl, z. B. 4,50.");return}
@@ -977,20 +974,7 @@ function itemSheet(nr,pos){const x=findItem(nr,pos);if(!x)return;
   const st=async(s,msg)=>{try{await write(()=>ref().update({items:{[x.pos]:{status:s}}}));closeSheet();toast(msg)}catch(e){}};
   $("#s-back")&&($("#s-back").onclick=()=>st("zurueck",`${x.code} als zurückgegeben markiert.`));
   $("#s-shop")&&($("#s-shop").onclick=()=>st("offen",`${x.code} ist wieder im Laden.`));
-  $("#s-del")&&($("#s-del").onclick=e=>arm(e.currentTarget,()=>st("geloescht",`${x.code} gelöscht.`)));
-  const vt=$("#s-vortog");if(vt)vt.onclick=()=>{const b=$("#s-vorbox");b.hidden=!b.hidden;if(!b.hidden)$("#s-vorvk").select()};
-  const vg=$("#s-vorgo");if(vg)vg.onclick=()=>{const vk=parseEur($("#s-vorvk").value);if(isNaN(vk)){toast("Bitte den Preis eingeben, z. B. 3,00.");return}markVor(x,vk)};
-  const uv=$("#s-unvor");if(uv)uv.onclick=e=>arm(e.currentTarget,()=>unVor(x))}
-function buchBeleg(){const b=S.belege.find(q=>q.id===BUCH_ID);return b&&!b.storniert?b:null}
-async function saveBuch(items){const summe=Math.round(items.reduce((a,i)=>a+(+i.vk||0),0)*100)/100;
-  if(items.length)await write(()=>db.doc("belege/"+BUCH_ID).set({nr:BUCH,zeit:"",items,summe,gegeben:null,storniert:false}));
-  else await write(()=>db.doc("belege/"+BUCH_ID).delete())}
-async function markVor(x,vk){const old=buchBeleg(),items=(old?old.items:[]).filter(i=>i.code!==x.code);
-  items.push({code:x.code,nr:x.nr,pos:x.pos,bez:x.bez,gr:x.gr||"",preis:+x.preis||0,vk,art:x.art});
-  items.sort((a,b)=>a.nr-b.nr||a.pos-b.pos);
-  try{await write(()=>db.doc("personen/"+x.nr).update({items:{[x.pos]:{status:"verkauft",vk,vkAm:"",beleg:BUCH}}}));await saveBuch(items);closeSheet();toast(`${x.code} als vor dem Kassensystem verkauft markiert.`)}catch(e){}}
-async function unVor(x){const old=buchBeleg(),items=(old?old.items:[]).filter(i=>i.code!==x.code);
-  try{await write(()=>db.doc("personen/"+x.nr).update({items:{[x.pos]:{status:"offen",vk:null,vkAm:null,beleg:null,ausgezahlt:false}}}));await saveBuch(items);closeSheet();toast(`${x.code} ist wieder im Laden.`)}catch(e){}}
+  $("#s-del")&&($("#s-del").onclick=e=>arm(e.currentTarget,()=>st("geloescht",`${x.code} gelöscht.`)))}
 
 /* ---------- Einlieferer ---------- */
 function vPersonen(v){v.innerHTML=`<div id="p-root"></div>`;pRender()}
@@ -1054,7 +1038,7 @@ function qRender(){const root=$("#q-root");if(!root)return;
   const b=S.qDetail&&S.belege.find(x=>x.id===S.qDetail);
   if(b){root.innerHTML=`<button class="back" id="q-back">‹ Alle Quittungen</button>
     <div class="grid2"><div class="receipt">${receiptHtml(b)}</div>
-    <div class="panel"><h3>Quittung ${h(b.nr)}</h3>${b.storniert?pill("storno","Storniert"):""}${b.id===BUCH_ID?`<div>${pill("vor","Vor dem Kassensystem verkauft")}</div><p class="hint">Hier stehen alle Teile, die laut Buch schon verkauft waren, bevor es die Kasse gab. Weitere Teile markierst du im Bestand: Teil antippen und „Wurde schon vor dem Kassensystem verkauft“ wählen.</p>`:""}
+    <div class="panel"><h3>Quittung ${h(b.nr)}</h3>${b.storniert?pill("storno","Storniert"):""}${b.id===BUCH_ID?`<div>${pill("vor","Vor dem Kassensystem verkauft")}</div><p class="hint">Hier stehen alle Teile, die laut Buch schon verkauft waren, bevor es die Kasse gab.</p>`:""}
       <div class="btns"><button class="b pri" id="q-pdf">Als PDF speichern</button>${!b.storniert?`<button class="b danger" id="q-storno">Stornieren</button>`:""}</div>
       <p class="hint">Stornieren legt alle Teile dieser Quittung wieder in den Laden.</p></div></div>`;
     $("#q-back").onclick=()=>{S.qDetail=null;qRender()};$("#q-pdf").onclick=()=>pdfQuittung(b);
