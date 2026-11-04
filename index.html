@@ -1074,11 +1074,7 @@ function vSettings(v){if(!S.unlocked)return vPin(v);v.innerHTML=`<div id="st-not
   <p class="hint">Zusätzlich kannst du jederzeit eine Sicherungsdatei erstellen. Im Teilen-Menü wählst du dann zum Beispiel die Nextcloud-App. Mit der Datei lässt sich alles auf einem anderen Gerät wiederherstellen.</p>
   <p class="hint" id="st-last"></p>
   <div class="btns"><button class="b pri" id="st-bak">Sicherung erstellen und teilen</button><label class="b" for="st-file" style="display:inline-flex;align-items:center;cursor:pointer">Sicherung einspielen</label><input type="file" id="st-file" accept=".json,application/json" hidden></div>
-  <div id="st-imp"></div></section>
-  <section class="panel" style="grid-column:1/-1;border-color:var(--bad)"><h3 style="color:var(--bad)">Alles zurücksetzen</h3>
-  <p class="hint">Löscht alle Personen, Teile und Quittungen auf diesem Gerät und bei GitHub. Name des Ladens, PIN und die Verbindung zu GitHub bleiben erhalten. Das lässt sich nur mit einer Sicherungsdatei rückgängig machen.</p>
-  <div class="fields"><label class="f" for="rs-word">Zum Bestätigen LÖSCHEN eintippen<input id="rs-word" autocomplete="off" autocapitalize="characters" placeholder="LÖSCHEN"></label></div>
-  <div class="btns"><button class="b danger" id="rs-go" type="button">Alles zurücksetzen</button></div></section></div>`;
+  <div id="st-imp"></div></section></div>`;
   $("#st-form").addEventListener("submit",async e=>{e.preventDefault();const np=$("#st-pin").value.trim();if(np&&!/^\d{4,8}$/.test(np)){toast("Die PIN muss aus 4 bis 8 Ziffern bestehen.");return}
     const s={...S.settings,name:$("#st-name").value.trim()||"Secondhand-Laden",sub:$("#st-sub").value.trim()};if(np)s.pinHash=pinHash(np);$("#st-pin").value="";
     const zp=$("#st-zpin").value.trim();if(zp&&!/^\d{4,8}$/.test(zp)){toast("Die Zugangs-PIN muss aus 4 bis 8 Ziffern bestehen.");return}
@@ -1087,12 +1083,6 @@ function vSettings(v){if(!S.unlocked)return vPin(v);v.innerHTML=`<div id="st-not
     try{await write(()=>db.doc("einstellungen/laden").set(s));toast("Gespeichert.")}catch(e){}});
   $("#st-csv").onclick=exportCsv;
   $("#st-bak").onclick=backup;stLast();ghPanel();renderNotice();
-  $("#rs-go").onclick=e=>{if($("#rs-word").value.trim().toUpperCase()!=="LÖSCHEN"){toast("Bitte zum Bestätigen LÖSCHEN eintippen.");$("#rs-word").focus();return}
-    if(GH.blocked){toast("Bitte zuerst bei GitHub auswählen, welcher Stand gilt.");return}
-    arm(e.currentTarget,()=>{const keep=db.exportAll().einstellungen||{};
-      try{db.importAll(Object.keys(keep).length?{einstellungen:keep}:{})}catch(x){toast("Zurücksetzen hat nicht geklappt.");return}
-      S.cart=[];S.last=null;S.eNr="";S.pDetail=null;S.qDetail=null;try{localStorage.removeItem("shk-lastbackup")}catch(x){}
-      $("#rs-word").value="";checkBackup();toast(ghCfg()?"Alles zurückgesetzt. Wird bei GitHub gespeichert.":"Alles zurückgesetzt.")})};
   $("#st-file").addEventListener("change",e=>{const f=e.target.files[0];e.target.value="";if(!f)return;const r=new FileReader();
     r.onload=()=>{let d;try{d=JSON.parse(r.result)}catch(x){toast("Diese Datei ist keine Sicherung der Kasse.");return}
       if(!d||d.app!=="secondhand-kasse"||!d.data){toast("Diese Datei ist keine Sicherung der Kasse.");return}
