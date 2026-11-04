@@ -473,6 +473,10 @@ nav.tabs::-webkit-scrollbar{display:none}
 .tab.main svg{width:22px;height:22px}
 .tab[aria-selected="true"],.tab[aria-selected="true"]:hover{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
 .tsep{flex:0 0 1px;align-self:stretch;background:var(--line);margin:6px}
+.lock{position:fixed;inset:0;z-index:200;background:var(--band);display:grid;place-items:center;padding:max(16px,env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) max(16px,env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+.lockbox{background:var(--surface);border-radius:20px;padding:28px 24px;width:min(360px,100%);display:flex;flex-direction:column;gap:12px;align-items:center;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+.lockbox h2{margin:0}.lockbox input{text-align:center;letter-spacing:.3em}
+.logo.lk{width:56px;height:56px;border-radius:14px;background:var(--tag);color:var(--tag-ink);display:grid;place-items:center;font:800 28px var(--f-display);transform:rotate(-8deg)}
 .hbtn{flex:0 0 auto;width:46px;height:46px;border-radius:50%;border:0;background:rgba(255,255,255,.13);color:var(--band-ink);display:grid;place-items:center;cursor:pointer;position:relative}
 .hbtn svg{width:24px;height:24px}
 .hbtn:hover{background:rgba(255,255,255,.22)}
@@ -588,7 +592,7 @@ td.num,th.num{text-align:right;white-space:nowrap}
       <h1 id="shopName">Secondhand-Laden</h1>
       <div class="sub" id="shopSub">Kasse und Bestandsbuch</div>
     </div></div>
-    <div class="hright"><div class="sync"><span class="dot" id="syncDot"></span><span id="syncTxt">Lade …</span></div><button class="hbtn" id="gearBtn" type="button" aria-label="Einstellungen" title="Einstellungen" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button><button class="helpbtn" id="helpBtn" type="button" aria-label="Hilfe zu dieser Seite" title="Hilfe">?</button></div>
+    <div class="hright"><div class="sync"><span class="dot" id="syncDot"></span><span id="syncTxt">Lade …</span></div><button class="hbtn" id="lockBtn" type="button" aria-label="Kasse sperren" title="Kasse sperren" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></button><button class="hbtn" id="gearBtn" type="button" aria-label="Einstellungen" title="Einstellungen" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button><button class="helpbtn" id="helpBtn" type="button" aria-label="Hilfe zu dieser Seite" title="Hilfe">?</button></div>
   </header>
   <div class="banner" id="banner" hidden></div>
   <nav class="tabs" role="tablist" id="tabs">
@@ -602,6 +606,10 @@ td.num,th.num{text-align:right;white-space:nowrap}
   <main id="view"></main>
 </div>
 <div id="toast" hidden></div>
+<div id="lock" class="lock" hidden><form id="lock-form" class="lockbox" autocomplete="off">
+  <span class="logo lk" aria-hidden="true">€</span><h2 id="lock-name">Secondhand-Laden</h2><p class="hint">Bitte die Zugangs-PIN eingeben.</p>
+  <input id="lock-in" class="big" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="8" aria-label="Zugangs-PIN" placeholder="••••">
+  <button class="b pri" style="width:100%">Öffnen</button><p class="hint" id="lock-msg" style="color:var(--bad);min-height:1.4em"></p></form></div>
 <div id="sheetRoot"></div>
 
 <script>
@@ -773,6 +781,11 @@ function vAnnahme(v){v.innerHTML=`
         <input type="radio" name="e-art" id="e-art-a" value="auszahlung" checked><label for="e-art-a">Geld zurück</label>
         <input type="radio" name="e-art" id="e-art-s" value="spende"><label for="e-art-s">Spende</label>
       </div>
+      <button type="button" class="link" id="e-postog" aria-expanded="false">Nummer selbst vergeben</button>
+      <div id="e-poswrap" class="stack" hidden>
+        <div class="fields"><label class="f" for="e-pos">Teilenummer<input id="e-pos" inputmode="numeric" placeholder="z. B. 8"><small>die Zahl hinter dem Strich, leer = automatisch</small></label></div>
+        <div id="e-posinfo"></div>
+      </div>
       <button class="b pri" id="e-save">Teil speichern</button>
     </fieldset>
   </form>
@@ -784,12 +797,19 @@ function vAnnahme(v){v.innerHTML=`
   </section>
 </div>`;
   const nrI=$("#e-nr");nrI.value=S.eNr||"";
-  nrI.addEventListener("input",()=>{S.eNr=nrI.value.replace(/\D/g,"");nrI.value=S.eNr;$("#e-new").innerHTML="";ePerson(true);eItems()});
+  nrI.addEventListener("input",()=>{S.eNr=nrI.value.replace(/\D/g,"");nrI.value=S.eNr;$("#e-new").innerHTML="";ePerson(true);eItems();ePosInfo()});
   $("#e-name").addEventListener("input",eStep);
   $("#e-pform").addEventListener("submit",e=>{e.preventDefault();if(!$("#e-step2").disabled)$("#e-bez").focus()});
   $("#e-pstatus").addEventListener("click",e=>{if(e.target.id==="e-next"){S.eNr=String(nextNr());nrI.value=S.eNr;ePerson(true);eItems();$("#e-name").focus()}});
   $("#e-iform").addEventListener("submit",e=>{e.preventDefault();saveItem()});
+  $("#e-postog").addEventListener("click",()=>{const w=$("#e-poswrap"),open=w.hidden;w.hidden=!open;$("#e-postog").textContent=open?"Doch automatisch vergeben":"Nummer selbst vergeben";$("#e-postog").setAttribute("aria-expanded",open?"true":"false");if(open)$("#e-pos").focus();else{$("#e-pos").value="";ePosInfo()}});
+  $("#e-pos").addEventListener("input",()=>{const i=$("#e-pos");i.value=i.value.replace(/\D/g,"");ePosInfo()});
   ePerson(true);eItems()}
+function posTaken(nr,pos){const p=S.personen.get(String(nr));if(!p)return null;const x=(p.items||{})[pos];return x&&x.status!=="geloescht"?x:null}
+function freePos(nr){const p=S.personen.get(String(nr));if(!p)return 1;let i=1;while(posTaken(nr,i))i++;return i}
+function ePosInfo(){const box=$("#e-posinfo");if(!box)return;const v=$("#e-pos").value,nr=S.eNr;
+  if(!v||!nr){box.innerHTML="";return}const x=posTaken(nr,+v);
+  box.innerHTML=x?`<div class="notice" style="margin:0">Die Nummer ${h(nr+"-"+(+v))} gibt es schon: ${h(x.bez)}${x.gr?" ("+h(x.gr)+")":""}, ${STATUS[x.status]||""}.</div>`:`<p class="hint">Die Nummer <b>${h(nr+"-"+(+v))}</b> ist frei.</p>`}
 function eStep(){const fs=$("#e-step2");if(!fs)return;const nr=S.eNr,p=nr&&S.personen.get(nr),ok=!!(nr&&(p||$("#e-name").value.trim()));
   fs.disabled=!ok;$("#e-iform").classList.toggle("off",!ok);
   $("#e-s2hint").textContent=ok?(p?`Für ${p.name}, Nr. ${p.nr}.`:`Für die neue Person Nr. ${nr}.`):(nr?"Bitte zuerst den Namen eintragen.":"Erst Schritt 1 ausfüllen.")}
@@ -804,18 +824,34 @@ function ePerson0(fill){const box=$("#e-pstatus");if(!box)return;const nr=S.eNr;
 function eItems(){const box=$("#e-items");if(!box)return;const p=S.eNr&&S.personen.get(S.eNr);
   if(!p){box.innerHTML=`<div class="empty">${S.eNr?"Noch keine Teile für Nr. "+h(S.eNr)+".":"Gib eine Personen-Nummer ein."}</div>`;return}
   const it=itemsOf(p);box.innerHTML=it.length?`<div class="tablewrap"><table><thead><tr><th>Nr.</th><th>Teil</th><th class="num">Preis</th></tr></thead><tbody>${it.slice().reverse().map(x=>`<tr><td>${tag(x.code)}</td><td>${h(x.bez)}${x.gr?` <span class="muted">${h(x.gr)}</span>`:""}<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:4px">${pill(x.status,STATUS[x.status])}${x.art==="spende"?pill("spende","Spende"):""}</div></td><td class="num">${eur(x.preis)}</td></tr>`).join("")}</tbody></table></div>`:`<div class="empty">Noch keine Teile.</div>`}
-async function saveItem(){const nr=S.eNr;if(!nr){toast("Bitte zuerst eine Personen-Nummer eingeben.");$("#e-nr").focus();return}
+function askTaken(nr,pos,item){const x=posTaken(nr,pos),code=nr+"-"+pos,sold=x.status==="verkauft",nf=freePos(nr);
+  openSheet(`<div class="sheet-h"><h3 style="margin:0">Nummer ${h(code)} gibt es schon</h3><button class="x" data-close aria-label="Schließen">×</button></div>
+  <div class="who">${tag(code)}<b>${h(x.bez)}</b><span class="muted">${h(x.gr||"")}</span>${pill(x.status,STATUS[x.status])}<span>${eur(x.preis)}</span></div>
+  <p class="hint">Zwei Teile mit derselben Nummer gehen nicht, weil die Kasse beim Verkauf sonst nicht weiß, welches gemeint ist.${sold?" Dieses Teil ist schon verkauft und kann deshalb nicht ersetzt werden.":""}</p>
+  <div class="btns" style="flex-direction:column;align-items:stretch">
+    <button class="b pri" id="tk-next" type="button">Nächste freie Nummer nehmen: ${h(nr+"-"+nf)}</button>
+    ${sold?"":`<button class="b danger" id="tk-repl" type="button">Vorhandenes Teil durch das neue ersetzen</button>`}
+    <button class="b" data-close type="button">Abbrechen</button></div>`);
+  $("#tk-next").onclick=()=>{closeSheet();saveItem("next")};
+  const r=$("#tk-repl");if(r)r.onclick=e=>arm(e.currentTarget,()=>{closeSheet();saveItem("replace")})}
+async function saveItem(mode){const nr=S.eNr;if(!nr){toast("Bitte zuerst eine Personen-Nummer eingeben.");$("#e-nr").focus();return}
   const bez=$("#e-bez").value.trim(),gr=$("#e-gr").value.trim(),preis=parseEur($("#e-preis").value);
   const art=document.querySelector('input[name="e-art"]:checked').value;
   if(!bez){toast("Bitte eintragen, was abgegeben wurde.");$("#e-bez").focus();return}
   if(isNaN(preis)){toast("Bitte einen Preis eingeben, z. B. 4,50.");$("#e-preis").focus();return}
   const iso=new Date().toISOString();const p=S.personen.get(nr);
   const item={bez,gr,preis,art,status:"offen",erfasst:iso};
+  const own=!$("#e-poswrap").hidden&&$("#e-pos").value?+$("#e-pos").value:0;
+  if(own<0||own>9999){toast("Bitte eine Teilenummer zwischen 1 und 9999 eingeben.");return}
+  if(!p&&!$("#e-name").value.trim()){toast("Bitte den Namen der Person eintragen.");$("#e-name").focus();return}
+  if(own&&posTaken(nr,own)&&mode!=="replace"&&mode!=="next"){askTaken(nr,own,item);return}
   try{
-    let pos;
-    if(p){pos=nextPos(p);await write(()=>db.doc("personen/"+nr).update({items:{[pos]:item},standardArt:art}))}
-    else{const name=$("#e-name").value.trim();if(!name){toast("Bitte den Namen der Person eintragen.");$("#e-name").focus();return}
-      pos=1;await write(()=>db.doc("personen/"+nr).set({nr:+nr,name,kontakt:$("#e-kontakt").value.trim(),erstellt:iso,standardArt:art,items:{1:item}}))}
+    let pos=own||(p?nextPos(p):1);
+    if(mode==="next")pos=freePos(nr);
+    if(p){await write(()=>db.doc("personen/"+nr).update({items:{[pos]:item},standardArt:art}))}
+    else{const name=$("#e-name").value.trim();
+      await write(()=>db.doc("personen/"+nr).set({nr:+nr,name,kontakt:$("#e-kontakt").value.trim(),erstellt:iso,standardArt:art,items:{[pos]:item}}))}
+    $("#e-pos").value="";ePosInfo();
     $("#e-new").innerHTML=`<div class="ok-box"><span>Gespeichert. Diese Nummer aufs Etikett schreiben:</span><div>${tag(nr+"-"+pos,true)}</div><span>${h(bez)}${gr?" · "+h(gr):""} · ${eur(preis)}</span></div>`;
     $("#e-bez").value="";$("#e-gr").value="";$("#e-preis").value="";$("#e-bez").focus()
   }catch(e){}}
@@ -1027,7 +1063,9 @@ function vPin(v){v.innerHTML=`<div class="grid2"><section class="panel"><h2>Eins
 function vSettings(v){if(!S.unlocked)return vPin(v);v.innerHTML=`<div id="st-notice"></div><div class="grid2"><section class="panel"><h2>Einstellungen</h2>
   <form id="st-form" class="stack"><label class="f" for="st-name">Name des Ladens<input id="st-name" value="${h(S.settings.name)}"></label>
   <label class="f" for="st-sub">Zweite Zeile auf Quittungen<input id="st-sub" value="${h(S.settings.sub)}"></label>
-  <label class="f" for="st-pin">Neue PIN für die Einstellungen<input id="st-pin" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="8" placeholder="leer lassen = PIN bleibt"></label>
+  <label class="f" for="st-pin">Neue PIN für die Einstellungen<input id="st-pin" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="8" placeholder="leer lassen = PIN bleibt"><small>nur für dich, schützt diese Seite</small></label>
+  <label class="f" for="st-zpin">Zugangs-PIN für die Kasse<input id="st-zpin" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="8" placeholder="${S.settings.zugangHash?"leer lassen = PIN bleibt":"noch keine, Kasse ist offen"}"><small>wird beim Öffnen der Kasse abgefragt, für alle, die kassieren</small></label>
+  ${S.settings.zugangHash?`<label style="display:flex;gap:8px;align-items:center;font-size:15px"><input type="checkbox" id="st-zoff" style="width:auto"> Zugangs-PIN ausschalten</label>`:""}
   <div class="btns"><button class="b pri">Speichern</button></div></form></section>
   <section class="panel"><h3>Daten sichern</h3><p class="hint">Exportiert alle Teile mit Spender oder Verkäufer, Preis, Status und Verkaufsdatum als Tabelle für Excel oder Numbers.</p><div class="btns"><button class="b" id="st-csv">Alles als CSV speichern</button></div>
 </section>
@@ -1043,6 +1081,9 @@ function vSettings(v){if(!S.unlocked)return vPin(v);v.innerHTML=`<div id="st-not
   <div class="btns"><button class="b danger" id="rs-go" type="button">Alles zurücksetzen</button></div></section></div>`;
   $("#st-form").addEventListener("submit",async e=>{e.preventDefault();const np=$("#st-pin").value.trim();if(np&&!/^\d{4,8}$/.test(np)){toast("Die PIN muss aus 4 bis 8 Ziffern bestehen.");return}
     const s={...S.settings,name:$("#st-name").value.trim()||"Secondhand-Laden",sub:$("#st-sub").value.trim()};if(np)s.pinHash=pinHash(np);$("#st-pin").value="";
+    const zp=$("#st-zpin").value.trim();if(zp&&!/^\d{4,8}$/.test(zp)){toast("Die Zugangs-PIN muss aus 4 bis 8 Ziffern bestehen.");return}
+    if(zp&&pinHash(zp)===(s.pinHash||DEFAULT_PIN)){toast("Bitte für den Zugang eine andere PIN nehmen als für die Einstellungen.");return}
+    if(zp)s.zugangHash=pinHash("z:"+zp);if($("#st-zoff")&&$("#st-zoff").checked)delete s.zugangHash;$("#st-zpin").value="";
     try{await write(()=>db.doc("einstellungen/laden").set(s));toast("Gespeichert.")}catch(e){}});
   $("#st-csv").onclick=exportCsv;
   $("#st-bak").onclick=backup;stLast();ghPanel();renderNotice();
@@ -1228,7 +1269,16 @@ async function ghConnect(){const owner=$("#gh-owner").value.trim(),repo=$("#gh-r
     lsSet("shk-gh",JSON.stringify(c));lsSet("shk-gh-sha","");if(Object.keys(db.exportAll().personen||{}).length)lsSet("shk-gh-dirty","1");Object.assign(GH,{blocked:false,conflict:null});
     ghPanel();await ghStartup();ghPanel();if(GH.state==="ok")toast("Verbunden. Ab jetzt wird automatisch gesichert.")}
   catch(e){fail("Keine Verbindung zu GitHub. Ist das Gerät online?")}}
-function applySettings(){$("#shopName").textContent=S.settings.name;$("#shopSub").textContent=S.settings.sub||"Kasse und Bestandsbuch"}
+let lockT=null;
+function zugang(){return S.settings.zugangHash||null}
+function lockNow(){if(!zugang())return;S.locked=true;closeSheet();$("#lock").hidden=false;$("#lock-in").value="";$("#lock-msg").textContent="";$("#lock-name").textContent=S.settings.name||"Secondhand-Laden";setTimeout(()=>$("#lock-in").focus(),60)}
+function bumpLock(){clearTimeout(lockT);if(zugang()&&!S.locked)lockT=setTimeout(lockNow,15*60*1000)}
+$("#lock-form").addEventListener("submit",e=>{e.preventDefault();const v=$("#lock-in").value.trim();
+  if(pinHash("z:"+v)===zugang()||pinHash(v)===curPin()){S.locked=false;$("#lock").hidden=true;bumpLock()}
+  else{$("#lock-msg").textContent="Die PIN stimmt nicht.";$("#lock-in").value="";$("#lock-in").focus()}});
+$("#lockBtn").addEventListener("click",()=>{S.unlocked=false;if(S.view==="einstellungen")go("kasse");lockNow()});
+["pointerdown","keydown"].forEach(t=>document.addEventListener(t,bumpLock,{passive:true}));
+function applySettings(){$("#lockBtn").hidden=!zugang();if(!zugang()&&S.locked){S.locked=false;$("#lock").hidden=true}bumpLock();$("#shopName").textContent=S.settings.name;$("#shopSub").textContent=S.settings.sub||"Kasse und Bestandsbuch"}
 function makeLocalDb(onChange){
   const KEY="shk-data-v1";let data={};
   try{data=JSON.parse(localStorage.getItem(KEY)||"{}")||{}}catch(e){data={}}
@@ -1247,6 +1297,7 @@ function makeLocalDb(onChange){
     onSnapshot(next){const f=()=>{let e=Object.entries(data[c]||{});if(ord)e.sort((a,b)=>{const x=a[1][ord.f],y=b[1][ord.f];return (x<y?-1:x>y?1:0)*(ord.dir==="desc"?-1:1)});if(lim)e=e.slice(0,lim);const docs=e.map(([id,d])=>snap(id,d));next({docs,size:docs.length,empty:!docs.length})};subs.add(f);setTimeout(f,0);return()=>subs.delete(f)}}}
   return {doc,collection:c=>Object.assign(query(c),{doc:id=>doc(c+"/"+id)}),exportAll:()=>clone(data),importAll:d=>change(()=>{data=clone(d)})}}
 go("kasse");
+try{const pre=JSON.parse(localStorage.getItem("shk-data-v1")||"{}");const z=pre.einstellungen&&pre.einstellungen.laden;if(z&&z.zugangHash){S.settings={...S.settings,...z};applySettings();lockNow()}}catch(e){}
 (function(){
   let ok=true;try{localStorage.setItem("shk-test","1");localStorage.removeItem("shk-test")}catch(e){ok=false}
   if(!ok){setSync(false,"Speichern nicht möglich");showBanner("Dieser Browser erlaubt kein Speichern. Bitte den privaten Modus in Safari ausschalten.");S.loadedP=true;refresh();return}
