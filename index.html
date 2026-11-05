@@ -936,8 +936,9 @@ function bList(){const box=$("#b-list");if(!box)return;if(!S.loadedP){box.innerH
   if(S.bFilter!=="alle")l=l.filter(x=>x.status===S.bFilter);
   if(q)l=l.filter(x=>matchQ(x,q));
   if(!tot){box.innerHTML=`<div class="tablewrap"><div class="empty">Das Bestandsbuch ist noch leer. Unter <b>Annahme</b> trägst du das erste Teil ein.</div></div>`;return}
-  const sum=l.reduce((a,x)=>a+(x.status==="verkauft"?+x.vk||0:0),0);
-  box.innerHTML=`<p class="hint" style="margin-bottom:8px">${l.length} von ${tot} Teilen${sum?" · verkauft für "+eur(sum):""}. Zum Bearbeiten auf eine Zeile tippen.</p>
+  const all=allItems(),cnt=k=>all.filter(x=>x.status===k).length,filt=S.bFilter!=="alle"||q;
+  box.innerHTML=`<div class="kv" style="margin-bottom:12px"><div><span>Teile gesamt</span><b>${tot}</b></div><div class="hl"><span>Noch im Laden</span><b>${cnt("offen")}</b></div><div><span>Verkauft</span><b>${cnt("verkauft")}</b></div><div><span>Zurückgegeben</span><b>${cnt("zurueck")}</b></div></div>
+  ${filt?`<p class="hint" style="margin-bottom:8px">${l.length} ${l.length===1?"Teil":"Teile"} gefunden.</p>`:""}
   <div class="tablewrap"><table><thead><tr><th>Nr.</th><th>Teil</th><th>Größe</th><th>Von</th><th class="num">Preis</th><th>Art</th><th>Status</th><th class="num">Verkauft für</th></tr></thead><tbody>
   ${l.map(x=>`<tr class="row${isVor(x)?" vor":""}" tabindex="0" data-nr="${x.nr}" data-pos="${x.pos}"><td>${tag(x.code)}</td><td>${h(x.bez)}</td><td>${h(x.gr)}</td><td>${h(x.name)}</td><td class="num">${eur(x.preis)}</td><td>${pill(x.art,ART[x.art])}</td><td>${stPill(x)}</td><td class="num">${x.status==="verkauft"?eur(x.vk)+`<div class="muted" style="font-size:12px">${dDate(x.vkAm)}</div>`:"–"}</td></tr>`).join("")||`<tr><td colspan="8" class="empty">Nichts gefunden.</td></tr>`}
   </tbody></table></div>`}
