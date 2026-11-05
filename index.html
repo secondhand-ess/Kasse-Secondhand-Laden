@@ -904,10 +904,27 @@ const HELP={
 const SPK='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5L6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7M19 5a10 10 0 0 1 0 14"/></svg>';
 function speechText(t){return t.replace(/[„“"]/g,"").replace(/(\d+)-(\d+)/g,"$1 Strich $2")}
 function setSay(btn,on){if(btn)btn.innerHTML=SPK+(on?"Stopp":"Vorlesen")}
+function deVoices(){try{return (window.speechSynthesis.getVoices()||[]).filter(x=>/^de/i.test(x.lang))}catch(e){return []}}
+function voiceScore(v){const n=(v.name||"")+" "+(v.voiceURI||"");let p=0;
+  if(/natural|online|neural/i.test(n))p+=60;if(/premium/i.test(n))p+=50;if(/enhanced|erweitert/i.test(n))p+=40;
+  if(/^de-DE$/i.test(v.lang))p+=10;if(/compact|eSpeak|robot/i.test(n))p-=40;if(/Anna|Helena|Martin|Katja|Conrad|Petra|Markus|Yannick/i.test(n))p+=5;return p}
+function pickVoice(){const vs=deVoices();if(!vs.length)return null;let want=null;try{want=localStorage.getItem("shk-voice")}catch(e){}
+  if(want){const v=vs.find(x=>x.voiceURI===want||x.name===want);if(v)return v}
+  return vs.slice().sort((a,b)=>voiceScore(b)-voiceScore(a))[0]}
+try{window.speechSynthesis&&window.speechSynthesis.addEventListener&&window.speechSynthesis.addEventListener("voiceschanged",()=>{const b=$("#vc-box");if(b)voicePanel()})}catch(e){}
+function voicePanel(){const box=$("#vc-box");if(!box)return;if(!("speechSynthesis" in window)){box.innerHTML=`<p class="hint">Dieser Browser kann nicht vorlesen.</p>`;return}
+  const vs=deVoices().sort((a,b)=>voiceScore(b)-voiceScore(a));const cur=pickVoice();
+  if(!vs.length){box.innerHTML=`<p class="hint">Auf diesem Gerät ist keine deutsche Stimme installiert. Am iPad: Einstellungen, Bedienungshilfen, Gesprochene Inhalte, Stimmen, Deutsch.</p>`;return}
+  let saved=null;try{saved=localStorage.getItem("shk-voice")}catch(e){}
+  box.innerHTML=`<label class="f" for="vc-sel">Stimme<select id="vc-sel"><option value="">Automatisch (beste Stimme: ${h(vs[0].name)})</option>${vs.map(v=>`<option value="${h(v.voiceURI)}" ${saved===v.voiceURI?"selected":""}>${h(v.name)}${voiceScore(v)>=40?" ★":""}</option>`).join("")}</select><small>★ = besonders natürlich. Die Auswahl gilt nur für dieses Gerät.</small></label>
+    <div class="btns"><button type="button" class="b" id="vc-test">${SPK}Probe anhören</button></div>
+    <p class="hint">Bessere Stimmen bekommst du am iPad unter Einstellungen, Bedienungshilfen, Gesprochene Inhalte, Stimmen, Deutsch (Version „Erweitert“ oder „Premium“). Am Windows-Laptop klingen die Stimmen in Microsoft Edge am natürlichsten.</p>`;
+  $("#vc-sel").onchange=e=>{try{if(e.target.value)localStorage.setItem("shk-voice",e.target.value);else localStorage.removeItem("shk-voice")}catch(x){}toast("Stimme gespeichert.")};
+  $("#vc-test").onclick=e=>speak(e.currentTarget,"Hallo! So klinge ich, wenn ich dir die Kasse erkläre. Tippe die Nummer vom Etikett ein, zum Beispiel 110-3.")}
 function speak(btn,text){const ss=window.speechSynthesis;if(!ss)return;
   if(ss.speaking||ss.pending){ss.cancel();setSay(btn,false);return}
   const u=new SpeechSynthesisUtterance(speechText(text));u.lang="de-DE";u.rate=.95;
-  try{const vs=ss.getVoices().filter(x=>/^de/i.test(x.lang));if(vs.length)u.voice=vs.find(x=>/de-DE/i.test(x.lang))||vs[0]}catch(e){}
+  try{const v=pickVoice();if(v)u.voice=v}catch(e){}
   u.onend=u.onerror=()=>setSay(btn,false);ss.speak(u);setSay(btn,true)}
 function openHelp(){const hp=HELP[S.view]||HELP.kasse,[title,steps,tip]=hp;const canSay="speechSynthesis" in window;
   openSheet(`<div class="help stack" style="gap:16px"><div class="sheet-h"><h3>${h(title)}</h3><button class="x" data-close aria-label="Schließen">×</button></div>
@@ -1077,6 +1094,7 @@ function vSettings(v){if(!S.unlocked)return vPin(v);v.innerHTML=`<div id="st-not
   <label class="f" for="st-zpin">Zugangs-PIN für die Kasse<input id="st-zpin" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="8" placeholder="${S.settings.zugangHash?"leer lassen = PIN bleibt":"noch keine, Kasse ist offen"}"><small>wird beim Öffnen der Kasse abgefragt, für alle, die kassieren</small></label>
   ${S.settings.zugangHash?`<label style="display:flex;gap:8px;align-items:center;font-size:15px"><input type="checkbox" id="st-zoff" style="width:auto"> Zugangs-PIN ausschalten</label>`:""}
   <div class="btns"><button class="b pri">Speichern</button></div></form></section>
+  <section class="panel"><h3>Vorlesestimme</h3><div id="vc-box" class="stack"></div></section>
   <section class="panel"><h3>Daten sichern</h3><p class="hint">Exportiert alle Teile mit Spender oder Verkäufer, Preis, Status und Verkaufsdatum als Tabelle für Excel oder Numbers.</p><div class="btns"><button class="b" id="st-csv">Alles als CSV speichern</button></div>
 </section>
   <section class="panel" style="grid-column:1/-1"><h3>Automatisch bei GitHub speichern</h3><div id="gh-box" class="stack"></div></section>
@@ -1091,7 +1109,7 @@ function vSettings(v){if(!S.unlocked)return vPin(v);v.innerHTML=`<div id="st-not
     if(zp&&pinHash(zp)===(s.pinHash||DEFAULT_PIN)){toast("Bitte für den Zugang eine andere PIN nehmen als für die Einstellungen.");return}
     if(zp)s.zugangHash=pinHash("z:"+zp);if($("#st-zoff")&&$("#st-zoff").checked)delete s.zugangHash;$("#st-zpin").value="";
     try{await write(()=>db.doc("einstellungen/laden").set(s));toast("Gespeichert.")}catch(e){}});
-  $("#st-csv").onclick=exportCsv;
+  $("#st-csv").onclick=exportCsv;voicePanel();
   $("#st-bak").onclick=backup;stLast();ghPanel();renderNotice();
   $("#st-file").addEventListener("change",e=>{const f=e.target.files[0];e.target.value="";if(!f)return;const r=new FileReader();
     r.onload=()=>{let d;try{d=JSON.parse(r.result)}catch(x){toast("Diese Datei ist keine Sicherung der Kasse.");return}
